@@ -81,7 +81,6 @@ button { cursor: pointer; border: none; outline: none; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* FILTROS E PESQUISA */
 .filter-bar {
   margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px;
 }
@@ -115,6 +114,7 @@ button { cursor: pointer; border: none; outline: none; }
 .post-text { font-size: 14px; padding: 0 16px 14px; white-space: pre-wrap; color: #333; }
 .post-image { width: 100%; display: block; max-height: 480px; object-fit: cover; background: #eee; }
 
+/* AÇÕES DO POST */
 .post-actions {
   display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid #f0f0f0;
 }
@@ -138,7 +138,6 @@ button { cursor: pointer; border: none; outline: none; }
   flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px;
 }
 
-/* TELA SOBRE A ONG */
 .about-card { padding: 22px; margin-bottom: 20px; }
 .about-card h2 { color: var(--green-dark); font-size: 20px; margin-bottom: 12px; }
 .about-card h3 { font-size: 15px; margin: 16px 0 8px; color: var(--text); }
@@ -195,10 +194,14 @@ button { cursor: pointer; border: none; outline: none; }
 }
 
 .sidebar { position: sticky; top: 80px; height: max-content; }
-.sidebar-card { padding: 18px; }
+.sidebar-card { padding: 18px; margin-bottom: 16px; }
 .sidebar-card h2 { font-size: 15px; margin-bottom: 10px; }
 .about-summary { font-size: 13px; color: var(--muted); line-height: 1.5; }
 .btn-link { color: var(--green); font-weight: 700; cursor: pointer; background: none; border: none; font-size: 13px; }
+.btn-export {
+  width: 100%; background: var(--green-soft); color: var(--green-dark); border: 1px solid var(--green);
+  padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 10px;
+}
 
 .mobile-nav {
   position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff;
@@ -272,7 +275,6 @@ button { cursor: pointer; border: none; outline: none; }
         </div>
       </div>
 
-      <!-- FEED DE PUBLICAÇÕES -->
       <div id="feedNoticias"></div>
     </div>
 
@@ -301,14 +303,7 @@ button { cursor: pointer; border: none; outline: none; }
 
         <h3>Nossa História & Atuação</h3>
         <p>
-          Coordenado pela fundadora <strong>Tia Eliane Conrado</strong>, o instituto atua na transformação e reinserção social de famílias em situação de vulnerabilidade em Aparecida de Goiânia e região. Oferecemos acompanhamento social completo, qualificação profissional, refeições diárias e oficinas culturais e esportivas para crianças e jovens.
-        </p>
-
-        <h3>Nossos Projetos</h3>
-        <p>
-          • <strong>Atendimento Infantil Permanente:</strong> Aulas de Ballet e Judô no contraturno escolar, reforço alimentício e acompanhamento familiar.<br>
-          • <strong>Capacitação Profissional:</strong> Cursos profissionalizantes e palestras orientativas para jovens e adultos ingressarem no mercado de trabalho.<br>
-          • <strong>Segurança Alimentar:</strong> Distribuição de cestas básicas e apoio a famílias em vulnerabilidade extrema.
+          Coordenado pela fundadora <strong>Tia Eliane Conrado</strong>, o instituto atua na transformação e reinserção social de famílias em situação de vulnerabilidade em Aparecida de Goiânia e região.
         </p>
 
         <h3>Contato e Sede</h3>
@@ -330,6 +325,12 @@ button { cursor: pointer; border: none; outline: none; }
       </p>
       <br>
       <button class="btn-link" onclick="mudarAba('sobre')">Ver História Completa da ONG →</button>
+    </div>
+
+    <div class="sidebar-card">
+      <h2>Gerenciar JSON</h2>
+      <p style="font-size: 12px; color: var(--muted);">Baixe o arquivo JSON atualizado com as novas publicações para atualizar no seu GitHub:</p>
+      <button class="btn-export" onclick="exportarJsonArtigos()">📥 Baixar artigos.json</button>
     </div>
   </aside>
 </main>
@@ -391,23 +392,14 @@ button { cursor: pointer; border: none; outline: none; }
   </button>
 </nav>
 
-<!-- TOAST NOTIFICATION -->
 <div id="toast" class="toast">Mensagem do sistema</div>
 
 <script>
-const STORAGE_KEY = "noticiasCrescerGoias_v4";
+const STORAGE_KEY = "noticiasCrescerGoias_v5";
+let artigosGerais = [];
 let categoriaAtual = "Todas";
 let buscaAtual = "";
 let deferredPrompt = null;
-
-function carregarNoticias() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
-}
-
-function salvarNoticias(noticias) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(noticias));
-}
 
 function showToast(msg) {
   const toast = document.getElementById("toast");
@@ -416,19 +408,50 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
-function fecharBanner() {
-  document.getElementById("downloadBanner").style.display = "none";
+async function carregarArtigos() {
+  let artigosJson = [];
+  try {
+    const res = await fetch('artigos.json');
+    if (res.ok) artigosJson = await res.json();
+  } catch (e) {
+    console.warn("Não foi possível carregar artigos.json localmente:", e);
+  }
+
+  let artigosLocais = [];
+  try {
+    artigosLocais = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch (e) {}
+
+  const mapaArtigos = new Map();
+  artigosJson.forEach(a => mapaArtigos.set(a.id, a));
+  artigosLocais.forEach(a => mapaArtigos.set(a.id, a));
+
+  artigosGerais = Array.from(mapaArtigos.values());
+  renderizarFeed();
 }
 
+function salvarArtigosLocais() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(artigosGerais));
+}
+
+function exportarJsonArtigos() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(artigosGerais, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", "artigos.json");
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  showToast("Arquivo artigos.json baixado!");
+}
+
+function fecharBanner() { document.getElementById("downloadBanner").style.display = "none"; }
 function instalarWebApp() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      fecharBanner();
-      deferredPrompt = null;
-    });
+    deferredPrompt.userChoice.then(() => { fecharBanner(); deferredPrompt = null; });
   } else {
-    alert("Para instalar o WebApp:\n\n• No Android/Chrome: Clique nos 3 pontos do navegador e escolha 'Adicionar à tela inicial'.\n• No iPhone/Safari: Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
+    alert("Para instalar:\n• Android/Chrome: Menu 3 pontos -> Adicionar à tela inicial.\n• iPhone/Safari: Compartilhar -> Adicionar à Tela de Início.");
   }
 }
 
@@ -469,7 +492,7 @@ function formatarData(dataIso) {
 
 function renderizarFeed() {
   const feed = document.getElementById("feedNoticias");
-  let noticias = carregarNoticias();
+  let noticias = [...artigosGerais];
 
   if (categoriaAtual !== "Todas") {
     noticias = noticias.filter(n => (n.categoria || "Ações") === categoriaAtual);
@@ -506,7 +529,7 @@ function renderizarFeed() {
       </div>
       <div class="post-title">${escapeHTML(noticia.titulo)}</div>
       <div class="post-text">${escapeHTML(noticia.descricao)}</div>
-      ${noticia.imagem ? `<img class="post-image" src="${noticia.imagem}" alt="Imagem do post" loading="lazy">` : ""}
+      ${noticia.imagem ? `<img class="post-image" src="${noticia.imagem}" alt="Imagem" loading="lazy">` : ""}
       
       <div class="post-actions">
         <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleCurtir('${noticia.id}')">
@@ -538,12 +561,11 @@ function renderizarFeed() {
 }
 
 function toggleCurtir(id) {
-  const noticias = carregarNoticias();
-  const post = noticias.find(n => n.id === id);
+  const post = artigosGerais.find(n => n.id === id);
   if (post) {
     post.curtido = !post.curtido;
     post.curtidas = (post.curtidas || 0) + (post.curtido ? 1 : -1);
-    salvarNoticias(noticias);
+    salvarArtigosLocais();
     renderizarFeed();
   }
 }
@@ -558,19 +580,18 @@ function adicionarComentacao(id) {
   const texto = input.value.trim();
   if (!texto) return;
 
-  const noticias = carregarNoticias();
-  const post = noticias.find(n => n.id === id);
+  const post = artigosGerais.find(n => n.id === id);
   if (post) {
     if (!post.comentarios) post.comentarios = [];
     post.comentarios.push({ autor: "Comunidade", texto, data: new Date().toISOString() });
-    salvarNoticias(noticias);
+    salvarArtigosLocais();
     renderizarFeed();
     showToast("Comentário publicado!");
   }
 }
 
 async function compartilhar(id) {
-  const post = carregarNoticias().find(n => n.id === id);
+  const post = artigosGerais.find(n => n.id === id);
   if (!post) return;
   const text = `${post.titulo}\n\n${post.descricao}`;
   if (navigator.share) {
@@ -578,18 +599,15 @@ async function compartilhar(id) {
   } else {
     try {
       await navigator.clipboard.writeText(text);
-      showToast("Texto copiado para compartilhar!");
-    } catch {
-      showToast("Não foi possível copiar.");
-    }
+      showToast("Texto copiado!");
+    } catch { showToast("Erro ao copiar."); }
   }
 }
 
 function excluirNoticia(id) {
-  if (!confirm("Deseja realmente apagar esta publicação?")) return;
-  let noticias = carregarNoticias();
-  noticias = noticias.filter(n => n.id !== id);
-  salvarNoticias(noticias);
+  if (!confirm("Deseja apagar esta publicação?")) return;
+  artigosGerais = artigosGerais.filter(n => n.id !== id);
+  salvarArtigosLocais();
   renderizarFeed();
   showToast("Publicação excluída.");
 }
@@ -637,77 +655,27 @@ document.getElementById("formNoticia").addEventListener("submit", e => {
   const categoria = document.getElementById("categoria").value;
   const descricao = document.getElementById("descricao").value.trim();
 
-  const noticias = carregarNoticias();
-  noticias.push({
-    id: Date.now().toString(),
+  const novoArtigo = {
+    id: "artigo-" + Date.now(),
     titulo, categoria, descricao,
     imagem: imagemSelecionada,
     dataCriacao: new Date().toISOString(),
     curtidas: 0, curtido: false, comentarios: []
-  });
+  };
 
-  salvarNoticias(noticias);
+  artigosGerais.push(novoArtigo);
+  salvarArtigosLocais();
+
   e.target.reset();
   imagemSelecionada = "";
   preview.style.display = "none";
   fecharModalPublicar();
   mudarAba('feed');
   renderizarFeed();
-  showToast("Publicação realizada com sucesso!");
+  showToast("Publicado com sucesso!");
 });
 
-if (!carregarNoticias().length) {
-  const artigosIniciais = [
-    {
-      id: "artigo-1",
-      titulo: "Campanha de Doação de Cestas Básicas para a Comunidade",
-      categoria: "Ações",
-      descricao: "Estamos iniciando nossa campanha mensal de arrecadação de alimentos não perecíveis. Nossa meta é atender mais de 200 famílias cadastradas na região da Vila Mariana em Aparecida de Goiânia. Contamos com a colaboração de todos! Doações podem ser entregues diretamente na sede da ONG ou via PIX.",
-      imagem: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80",
-      dataCriacao: new Date(Date.now() - 3600000 * 2).toISOString(),
-      curtidas: 18, curtido: true,
-      comentarios: [
-        { autor: "Maria Silva", texto: "Parabéns pela iniciativa! Como faço para doar via PIX?" },
-        { autor: "João Pedro", texto: "Já deixei minha contribuição na sede hoje cedo!" }
-      ]
-    },
-    {
-      id: "artigo-2",
-      titulo: "Abertas as Inscrições para Aulas Gratuitas de Judô e Ballet",
-      categoria: "Projetos",
-      descricao: "O Instituto Crescer Goiás informa que estão abertas as matrículas para os projetos esportivos e culturais de Judô e Ballet infantil. As aulas são totalmente gratuitas e direcionadas a crianças e adolescentes atendidos no contraturno escolar.",
-      imagem: "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&w=800&q=80",
-      dataCriacao: new Date(Date.now() - 3600000 * 24).toISOString(),
-      curtidas: 24, curtido: false,
-      comentarios: [
-        { autor: "Carla Mendes", texto: "Inscrições presenciais ou online?" }
-      ]
-    },
-    {
-      id: "artigo-3",
-      titulo: "Grande Mutirão de Saúde e Cidadania na Vila Mariana",
-      categoria: "Eventos",
-      descricao: "Neste próximo sábado, realizaremos um grande mutirão comunitário oferecendo atendimento odontológico básico, corte de cabelo gratuito, orientação jurídica e espaço de brincadeiras para as crianças. Venha participar e traga sua família!",
-      imagem: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-      dataCriacao: new Date(Date.now() - 3600000 * 48).toISOString(),
-      curtidas: 31, curtido: true,
-      comentarios: []
-    },
-    {
-      id: "artigo-4",
-      titulo: "Curso Gratuito de Capacitação Profissional para Jovens e Adultos",
-      categoria: "Projetos",
-      descricao: "Em parceria com voluntários locais, lançamos o módulo de capacitação em informática e preparação para o primeiro emprego. Uma oportunidade imperdível para quem busca se qualificar e ingressar no mercado de trabalho com autonomia.",
-      imagem: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-      dataCriacao: new Date(Date.now() - 3600000 * 72).toISOString(),
-      curtidas: 15, curtido: false,
-      comentarios: []
-    }
-  ];
-  salvarNoticias(artigosIniciais);
-}
-
-renderizarFeed();
+carregarArtigos();
 
 try {
   const manifestData = {
@@ -730,7 +698,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredPrompt = e;
 });
 
-  if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 </script>
