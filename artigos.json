@@ -47,5 +47,16 @@
     "curtidas": 15,
     "curtido": false,
     "comentarios": []
+  },
+  {
+    "id": "artigo-5",
+    "titulo": "Estudantes do Colégio Goianiense Adventista fortalecem solidariedade com doação de brinquedos",
+    "categoria": "Projetos",
+    "descricao": "A ação foi liderada pela Agência de Missões com apoio de professores e alunos voluntários do Colégio Adventista Goianiense.",
+    "imagem": "https://files.adventistas.org/noticias/pt/2024/10/WhatsApp-Image-2024-10-11-at-16.20.07-960x540.jpeg",
+    "dataCriacao": "2026-08-31T16:00:00.000Z",
+    "curtidas": 15,
+    "curtido": false,
+    "comentarios": []
   }
 ]
