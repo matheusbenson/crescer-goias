@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2e7d32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Crescer Goiás">
+<title>ONG Crescer Goiás • App Comunidade</title>
+
+<style>
+:root {
+  --green: #2e7d32;
+  --green-dark: #1b5e20;
+  --green-soft: #eaf5eb;
+  --text: #202124;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --bg: #f4f6f8;
+  --white: #fff;
+  --danger: #c62828;
+  --shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.5;
+  padding-bottom: 75px;
+}
+
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; border: none; outline: none; }
+
+/* BARRA SUPERIOR */
+.topbar {
+  position: sticky; top: 0; z-index: 100; height: 60px; background: #fff;
+  border-bottom: 1px solid var(--border); display: flex; align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.topbar-inner {
+  width: min(100%, 1080px); margin: auto; padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--green-dark); cursor: pointer; }
+.logo {
+  width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--green); color: #fff; font-size: 18px;
+}
+.brand span { font-size: 17px; }
+
+.top-actions { display: flex; gap: 8px; align-items: center; }
+.btn-install {
+  background: var(--green-soft); color: var(--green-dark); border: 1px solid var(--green);
+  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: none;
+}
+.btn-primary {
+  background: var(--green); color: #fff; border-radius: 20px;
+  padding: 8px 16px; font-weight: 700; font-size: 14px; transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--green-dark); }
+
+/* LAYOUT */
+.layout {
+  width: min(100%, 1080px); margin: 0 auto; display: grid;
+  grid-template-columns: minmax(0, 680px) 320px; gap: 24px; padding: 20px 16px;
+}
+
+/* NAVEGAÇÃO ENTRE ABAS */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* FILTROS E PESQUISA */
+.filter-bar {
+  margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.search-box {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--border);
+  border-radius: 12px; background: #fff; font-size: 14px; box-shadow: var(--shadow);
+}
+.tags-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.tag-chip {
+  background: #fff; border: 1px solid var(--border); padding: 6px 14px;
+  border-radius: 20px; font-size: 13px; color: var(--muted); white-space: nowrap; transition: all 0.2s;
+}
+.tag-chip.active { background: var(--green); color: #fff; border-color: var(--green); font-weight: 600; }
+
+/* CARDS E POSTS DO FEED */
+.post, .sidebar-card, .about-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+}
+.post { overflow: hidden; margin-bottom: 20px; }
+.post-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--green-soft);
+  color: var(--green-dark); display: grid; place-items: center; font-weight: 800; font-size: 14px;
+}
+.post-author { font-weight: 700; font-size: 14px; }
+.post-date { font-size: 11px; color: var(--muted); }
+.post-badge {
+  margin-left: auto; background: var(--green-soft); color: var(--green-dark);
+  padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+}
+.post-title { font-size: 18px; padding: 0 16px 6px; font-weight: 800; }
+.post-text { font-size: 14px; padding: 0 16px 14px; white-space: pre-wrap; color: #333; }
+.post-image { width: 100%; display: block; max-height: 480px; object-fit: cover; background: #eee; }
+
+/* AÇÕES DO POST */
+.post-actions {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid #f0f0f0;
+}
+.action-btn {
+  background: transparent; padding: 6px 10px; border-radius: 8px;
+  font-size: 13px; color: #555; display: flex; align-items: center; gap: 6px; font-weight: 600;
+}
+.action-btn:hover { background: #f4f4f4; }
+.action-btn.liked { color: var(--danger); }
+.delete-btn { margin-left: auto; color: #888; font-size: 12px; }
+.delete-btn:hover { color: var(--danger); }
+
+/* COMENTÁRIOS */
+.comments-section {
+  background: #fafafa; border-top: 1px solid #eee; padding: 12px 16px; display: none;
+}
+.comments-section.open { display: block; }
+.comment-item { font-size: 13px; padding: 6px 0; border-bottom: 1px solid #eee; }
+.comment-author { font-weight: 700; color: #444; }
+.add-comment { display: flex; gap: 8px; margin-top: 10px; }
+.add-comment input {
+  flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px;
+}
+
+/* TELA SOBRE A ONG */
+.about-card { padding: 22px; margin-bottom: 20px; }
+.about-card h2 { color: var(--green-dark); font-size: 20px; margin-bottom: 12px; }
+.about-card h3 { font-size: 15px; margin: 16px 0 8px; color: var(--text); }
+.about-card p { font-size: 14px; color: #444; margin-bottom: 12px; line-height: 1.6; }
+.about-highlights {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0;
+}
+.highlight-box {
+  background: var(--green-soft); padding: 12px; border-radius: 12px; text-align: center;
+}
+.highlight-box strong { display: block; font-size: 18px; color: var(--green-dark); }
+.highlight-box span { font-size: 12px; color: var(--muted); }
+.contact-info { background: #f8f9fa; border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 13px; }
+.external-link {
+  display: inline-block; margin-top: 12px; color: var(--green); font-weight: 700; text-decoration: none;
+}
+.external-link:hover { text-decoration: underline; }
+
+/* MODAL DE PUBLICAÇÃO */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 500; display: none; place-items: center; padding: 16px;
+}
+.modal-overlay.open { display: grid; }
+.modal-card {
+  background: #fff; border-radius: 16px; width: min(100%, 550px);
+  max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-head h2 { font-size: 18px; }
+.btn-close { background: none; font-size: 24px; color: var(--muted); }
+
+.field { margin-bottom: 12px; }
+.field input, .field textarea, .field select {
+  width: 100%; border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; outline: none; background: #fff; font-size: 14px;
+}
+.field textarea { min-height: 90px; resize: vertical; }
+
+.media-picker {
+  border: 1.5px dashed #b9c9ba; border-radius: 12px; padding: 12px;
+  background: #fafdfb; margin-bottom: 14px;
+}
+.media-picker-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.media-info { font-size: 12px; color: var(--muted); }
+.media-button {
+  border: 1px solid var(--green); color: var(--green-dark); background: #fff;
+  padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+.preview { display: none; margin-top: 10px; position: relative; }
+.preview img { display: block; width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; }
+.remove-image {
+  position: absolute; right: 8px; top: 8px; width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); color: #fff; font-size: 16px;
+}
+
+/* SIDEBAR */
+.sidebar { position: sticky; top: 80px; height: max-content; }
+.sidebar-card { padding: 18px; }
+.sidebar-card h2 { font-size: 15px; margin-bottom: 10px; }
+.about-summary { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.btn-link { color: var(--green); font-weight: 700; cursor: pointer; background: none; border: none; font-size: 13px; }
+
+/* NAVEGAÇÃO MOBILE (BOTTOM NAV) */
+.mobile-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff;
+  border-top: 1px solid var(--border); display: none; justify-content: space-around;
+  align-items: center; z-index: 400; box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--muted);
+  background: none; border: none; width: 33%; gap: 2px;
+}
+.nav-item.active { color: var(--green); font-weight: 700; }
+.nav-item span { font-size: 18px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%);
+  background: #222; color: #fff; padding: 10px 20px; border-radius: 25px;
+  font-size: 13px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+.empty { text-align: center; background: #fff; border: 1px dashed var(--border); border-radius: 16px; padding: 40px 20px; color: var(--muted); }
+
+/* RESPONSIVIDADE */
+@media(max-width: 850px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .mobile-nav { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<!-- BARRA SUPERIOR -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" onclick="mudarAba('feed')">
+      <div class="logo">🌱</div>
+      <span>Crescer Goiás</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn-install" id="btnInstall">📲 Instalar App</button>
+      <button class="btn-primary" onclick="abrirModalPublicar()">+ Publicar</button>
+    </div>
+  </div>
+</header>
+
+<!-- LAYOUT PRINCIPAL -->
+<main class="layout">
+  
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="content-area">
+    
+    <!-- ABA 1: FEED / INÍCIO -->
+    <div id="tab-feed" class="tab-content active">
+      <!-- BUSCA E FILTROS -->
+      <div class="filter-bar">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Pesquisar publicações..." oninput="filtrarPosts()">
+        <div class="tags-container">
+          <button class="tag-chip active" onclick="filtrarCategoria('Todas', this)">Todas</button>
+          <button class="tag-chip" onclick="filtrarCategoria('Ações', this)">Ações</button>
+          <button class="tag-chip" onclick="filtrarCategoria('Eventos', this)">Eventos</button>
+          <button class="tag-chip" onclick="filtrarCategoria('Avisos', this)">Avisos</button>
+          <button class="tag-chip" onclick="filtrarCategoria('Projetos', this)">Projetos</button>
+        </div>
+      </div>
+
+      <!-- FEED DE PUBLICAÇÕES -->
+      <div id="feedNoticias"></div>
+    </div>
+
+    <!-- ABA 2: SOBRE A ONG (Informações extraídas de crescergoias.org.br) -->
+    <div id="tab-sobre" class="tab-content">
+      <div class="about-card">
+        <h2>Instituto Crescer Goiás</h2>
+        <p><strong>Nome Oficial:</strong> Instituto Crêscer Cidação (Tia Eliane Conrado)</p>
+        <p>
+          O <strong>Instituto Crescer Goiás</strong> é uma Organização da Sociedade Civil de Interesse Público (OSCIP) sem fins lucrativos, fundada em 08 de abril de 2005 e reconhecida como Utilidade Pública Municipal (Lei nº 3.151/2013).
+        </p>
+
+        <div class="about-highlights">
+          <div class="highlight-box">
+            <strong>+15 Anos</strong>
+            <span>de Trabalho Social</span>
+          </div>
+          <div class="highlight-box">
+            <strong>200 Famílias</strong>
+            <span>Atendidas em Goiás</span>
+          </div>
+          <div class="highlight-box">
+            <strong>Judô & Ballet</strong>
+            <span>Oficinas Gratuitas</span>
+          </div>
+        </div>
+
+        <h3>Nossa História & Atuação</h3>
+        <p>
+          Coordenado pela fundadora <strong>Tia Eliane Conrado</strong>, o instituto atua na transformação e reinserção social de famílias em situação de vulnerabilidade em Aparecida de Goiânia e região. Oferecemos acompanhamento social completo, qualificação profissional, refeições diárias e oficinas culturais e esportivas para crianças e jovens.
+        </p>
+
+        <h3>Nossos Projetos</h3>
+        <p>
+          • <strong>Atendimento Infantil Permanente:</strong> Aulas de Ballet e Judô no contraturno escolar, reforço alimentício e acompanhamento familiar.<br>
+          • <strong>Capacitação Profissional:</strong> Cursos profissionalizantes e palestras orientativas para jovens e adultos ingressarem no mercado de trabalho.<br>
+          • <strong>Segurança Alimentar:</strong> Distribuição de cestas básicas e apoio a famílias em vulnerabilidade extrema.
+        </p>
+
+        <h3>Contato e Sede</h3>
+        <div class="contact-info">
+          📍 <strong>Endereço:</strong> Av. Chevalier Bazílio Jafet, s/n, Qd. 44, Lt. 02, Vila Mariana, Aparecida de Goiânia - GO<br>
+          📞 <strong>Telefones:</strong> (62) 98131-9923 / (62) 98181-1841<br>
+          🌐 <strong>Website Oficial:</strong> <a href="https://crescergoias.org.br/" target="_blank" class="external-link">crescergoias.org.br ↗</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR (DESKTOP) -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h2>Sobre o Espaço</h2>
+      <p class="about-summary">
+        Canal comunitário do <strong>Instituto Crescer Goiás</strong> para divulgar ações, mutirões, cursos e comunicados importantes.
+      </p>
+      <br>
+      <button class="btn-link" onclick="mudarAba('sobre')">Ver História Completa da ONG →</button>
+    </div>
+  </aside>
+</main>
+
+<!-- MODAL DE NOVA PUBLICAÇÃO -->
+<div class="modal-overlay" id="modalPublicar">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Nova Publicação</h2>
+      <button class="btn-close" onclick="fecharModalPublicar()">×</button>
+    </div>
+
+    <form id="formNoticia">
+      <div class="field">
+        <input id="titulo" type="text" maxlength="120" placeholder="Título da publicação..." required>
+      </div>
+      
+      <div class="field">
+        <select id="categoria">
+          <option value="Ações">🟢 Ações Sociais</option>
+          <option value="Eventos">📅 Eventos & Mutirões</option>
+          <option value="Avisos">📢 Avisos Importantes</option>
+          <option value="Projetos">🚀 Projetos</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <textarea id="descricao" maxlength="3000" placeholder="O que você gostaria de compartilhar?" required></textarea>
+      </div>
+
+      <div class="media-picker">
+        <div class="media-picker-row">
+          <div class="media-info"><strong>📷 Anexar Imagem</strong><br>JPG, PNG ou WEBP (Máx 5MB)</div>
+          <label class="media-button" for="imagem">Escolher</label>
+        </div>
+        <input id="imagem" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <div class="preview" id="preview">
+          <img id="previewImg" alt="Pré-visualização">
+          <button type="button" class="remove-image" id="removeImage">×</button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="action-btn" onclick="fecharModalPublicar()">Cancelar</button>
+        <button class="btn-primary" type="submit">Publicar Agora</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- NAVEGAÇÃO MOBILE (BOTTOM NAV) -->
+<nav class="mobile-nav">
+  <button class="nav-item active" id="nav-feed" onclick="mudarAba('feed')">
+    <span>🏠</span>Início
+  </button>
+  <button class="nav-item" onclick="abrirModalPublicar()">
+    <span>➕</span>Publicar
+  </button>
+  <button class="nav-item" id="nav-sobre" onclick="mudarAba('sobre')">
+    <span>ℹ️</span>Sobre
+  </button>
+</nav>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="toast">Mensagem do sistema</div>
+
+<script>
+// GERENCIAMENTO DE ESTADO E STORAGE
+const STORAGE_KEY = "noticiasCrescerGoias_v3";
+let categoriaAtual = "Todas";
+let buscaAtual = "";
+let deferredPrompt = null;
+
+function carregarNoticias() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function salvarNoticias(noticias) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(noticias));
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+// TROCA DE ABAS
+function mudarAba(aba) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  if (aba === 'feed') {
+    document.getElementById('tab-feed').classList.add('active');
+    document.getElementById('nav-feed').classList.add('active');
+  } else if (aba === 'sobre') {
+    document.getElementById('tab-sobre').classList.add('active');
+    document.getElementById('nav-sobre').classList.add('active');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// MODAL DE PUBLICAÇÃO
+function abrirModalPublicar() {
+  document.getElementById("modalPublicar").classList.add("open");
+  document.getElementById("titulo").focus();
+}
+
+function fecharModalPublicar() {
+  document.getElementById("modalPublicar").classList.remove("open");
+}
+
+// UTILITÁRIOS
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[c]));
+}
+
+function formatarData(dataIso) {
+  return new Date(dataIso).toLocaleDateString("pt-BR", {
+    day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"
+  });
+}
+
+// RENDERIZAÇÃO DO FEED
+function renderizarFeed() {
+  const feed = document.getElementById("feedNoticias");
+  let noticias = carregarNoticias();
+
+  if (categoriaAtual !== "Todas") {
+    noticias = noticias.filter(n => (n.categoria || "Ações") === categoriaAtual);
+  }
+  if (buscaAtual.trim() !== "") {
+    const q = buscaAtual.toLowerCase();
+    noticias = noticias.filter(n => n.titulo.toLowerCase().includes(q) || n.descricao.toLowerCase().includes(q));
+  }
+
+  noticias.sort((a,b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
+  feed.innerHTML = "";
+
+  if (!noticias.length) {
+    feed.innerHTML = '<div class="empty">🌱<br><br><strong>Nenhuma publicação encontrada.</strong></div>';
+    return;
+  }
+
+  noticias.forEach((noticia) => {
+    const post = document.createElement("article");
+    post.className = "post";
+    
+    const curtidas = noticia.curtidas || 0;
+    const isLiked = Boolean(noticia.curtido);
+    const comentarios = noticia.comentarios || [];
+
+    post.innerHTML = `
+      <div class="post-head">
+        <div class="avatar">CG</div>
+        <div>
+          <div class="post-author">ONG Crescer Goiás</div>
+          <div class="post-date">${formatarData(noticia.dataCriacao)}</div>
+        </div>
+        <span class="post-badge">${noticia.categoria || 'Geral'}</span>
+      </div>
+      <div class="post-title">${escapeHTML(noticia.titulo)}</div>
+      <div class="post-text">${escapeHTML(noticia.descricao)}</div>
+      ${noticia.imagem ? `<img class="post-image" src="${noticia.imagem}" alt="Imagem">` : ""}
+      
+      <div class="post-actions">
+        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleCurtir('${noticia.id}')">
+          ${isLiked ? '❤️' : '🤍'} <span>${curtidas}</span>
+        </button>
+        <button class="action-btn" onclick="toggleComentarios('${noticia.id}')">
+          💬 <span>${comentarios.length}</span>
+        </button>
+        <button class="action-btn" onclick="compartilhar('${noticia.id}')">↗ Compartilhar</button>
+        <button class="action-btn delete-btn" onclick="excluirNoticia('${noticia.id}')">Excluir</button>
+      </div>
+
+      <div class="comments-section" id="comments-${noticia.id}">
+        <div id="comment-list-${noticia.id}">
+          ${comentarios.map(c => `
+            <div class="comment-item">
+              <span class="comment-author">${escapeHTML(c.autor)}:</span> ${escapeHTML(c.texto)}
+            </div>
+          `).join('')}
+        </div>
+        <div class="add-comment">
+          <input type="text" id="input-comment-${noticia.id}" placeholder="Escreva um comentário...">
+          <button class="btn-primary" style="padding: 6px 12px; font-size:12px" onclick="adicionarComentacao('${noticia.id}')">Enviar</button>
+        </div>
+      </div>
+    `;
+    feed.appendChild(post);
+  });
+}
+
+// AÇÕES DOS POSTS
+function toggleCurtir(id) {
+  const noticias = carregarNoticias();
+  const post = noticias.find(n => n.id === id);
+  if (post) {
+    post.curtido = !post.curtido;
+    post.curtidas = (post.curtidas || 0) + (post.curtido ? 1 : -1);
+    salvarNoticias(noticias);
+    renderizarFeed();
+  }
+}
+
+function toggleComentarios(id) {
+  const el = document.getElementById(`comments-${id}`);
+  if (el) el.classList.toggle("open");
+}
+
+function adicionarComentacao(id) {
+  const input = document.getElementById(`input-comment-${id}`);
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const noticias = carregarNoticias();
+  const post = noticias.find(n => n.id === id);
+  if (post) {
+    if (!post.comentarios) post.comentarios = [];
+    post.comentarios.push({ autor: "Comunidade", texto, data: new Date().toISOString() });
+    salvarNoticias(noticias);
+    renderizarFeed();
+    showToast("Comentário publicado!");
+  }
+}
+
+async function compartilhar(id) {
+  const post = carregarNoticias().find(n => n.id === id);
+  if (!post) return;
+  const text = `${post.titulo}\n\n${post.descricao}`;
+  if (navigator.share) {
+    try { await navigator.share({ title: post.titulo, text }); } catch {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast("Texto copiado para compartilhar!");
+    } catch {
+      showToast("Não foi possível copiar.");
+    }
+  }
+}
+
+function excluirNoticia(id) {
+  if (!confirm("Deseja realmente apagar esta publicação?")) return;
+  let noticias = carregarNoticias();
+  noticias = noticias.filter(n => n.id !== id);
+  salvarNoticias(noticias);
+  renderizarFeed();
+  showToast("Publicação excluída.");
+}
+
+// FILTROS
+function filtrarCategoria(cat, btn) {
+  categoriaAtual = cat;
+  document.querySelectorAll('.tag-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderizarFeed();
+}
+
+function filtrarPosts() {
+  buscaAtual = document.getElementById("searchBox").value;
+  renderizarFeed();
+}
+
+// UPLOAD DE IMAGEM
+let imagemSelecionada = "";
+const inputImagem = document.getElementById("imagem");
+const preview = document.getElementById("preview");
+const previewImg = document.getElementById("previewImg");
+
+inputImagem.addEventListener("change", () => {
+  const file = inputImagem.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast("Imagem muito grande (máx 5MB)"); return; }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    imagemSelecionada = e.target.result;
+    previewImg.src = imagemSelecionada;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById("removeImage").addEventListener("click", () => {
+  imagemSelecionada = "";
+  inputImagem.value = "";
+  preview.style.display = "none";
+});
+
+// SUBMIT DO FORMULÁRIO DE PUBLICAÇÃO
+document.getElementById("formNoticia").addEventListener("submit", e => {
+  e.preventDefault();
+  const titulo = document.getElementById("titulo").value.trim();
+  const categoria = document.getElementById("categoria").value;
+  const descricao = document.getElementById("descricao").value.trim();
+
+  const noticias = carregarNoticias();
+  noticias.push({
+    id: Date.now().toString(),
+    titulo, categoria, descricao,
+    imagem: imagemSelecionada,
+    dataCriacao: new Date().toISOString(),
+    curtidas: 0, curtido: false, comentarios: []
+  });
+
+  salvarNoticias(noticias);
+  e.target.reset();
+  imagemSelecionada = "";
+  preview.style.display = "none";
+  fecharModalPublicar();
+  mudarAba('feed');
+  renderizarFeed();
+  showToast("Publicação realizada com sucesso!");
+});
+
+// DADOS INICIAIS DE EXEMPLO
+if (!carregarNoticias().length) {
+  salvarNoticias([
+    {
+      id: "1",
+      titulo: "Bem-vindos ao App da ONG Crescer Goiás!",
+      categoria: "Avisos",
+      descricao: "Acompanhe por aqui todas as nossas campanhas, aulas de Judô/Ballet, entregas de cestas básicas e projetos sociais em Aparecida de Goiânia.",
+      dataCriacao: new Date().toISOString(),
+      curtidas: 8, curtido: false, comentarios: []
+    }
+  ]);
+}
+
+// INICIALIZAÇÃO
+renderizarFeed();
+
+// MANIFESTO PWA DADOS
+try {
+  const manifestData = {
+    name: "ONG Crescer Goiás",
+    short_name: "CrescerGoiás",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#f4f6f8",
+    theme_color: "#2e7d32"
+  };
+  const manifestURI = "data:application/manifest+json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifestData));
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURI;
+  document.head.appendChild(link);
+} catch (e) {}
+
+// PROMPT DE INSTALAÇÃO DO APP
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('btnInstall');
+  btn.style.display = 'block';
+  btn.addEventListener('click', () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      btn.style.display = 'none';
+      deferredPrompt = null;
+    });
+  });
+});
+</script>
+</body>
+</html>
