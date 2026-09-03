@@ -1,0 +1,51 @@
+[
+  {
+    "id": "artigo-1",
+    "titulo": "Campanha de Doação de Cestas Básicas para a Comunidade",
+    "categoria": "Ações",
+    "descricao": "Estamos iniciando nossa campanha mensal de arrecadação de alimentos não perecíveis. Nossa meta é atender mais de 200 famílias cadastradas na região da Vila Mariana em Aparecida de Goiânia. Contamos com a colaboração de todos! Doações podem ser entregues diretamente na sede da ONG ou via PIX.",
+    "imagem": "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80",
+    "dataCriacao": "2026-09-03T10:00:00.000Z",
+    "curtidas": 18,
+    "curtido": false,
+    "comentarios": [
+      { "autor": "Maria Silva", "texto": "Parabéns pela iniciativa! Como faço para doar via PIX?" },
+      { "autor": "João Pedro", "texto": "Já deixei minha contribuição na sede hoje cedo!" }
+    ]
+  },
+  {
+    "id": "artigo-2",
+    "titulo": "Abertas as Inscrições para Aulas Gratuitas de Judô e Ballet",
+    "categoria": "Projetos",
+    "descricao": "O Instituto Crescer Goiás informa que estão abertas as matrículas para os projetos esportivos e culturais de Judô e Ballet infantil. As aulas são totalmente gratuitas e direcionadas a crianças e adolescentes atendidos no contraturno escolar.",
+    "imagem": "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&w=800&q=80",
+    "dataCriacao": "2026-09-02T14:30:00.000Z",
+    "curtidas": 24,
+    "curtido": false,
+    "comentarios": [
+      { "autor": "Carla Mendes", "texto": "Inscrições presenciais ou online?" }
+    ]
+  },
+  {
+    "id": "artigo-3",
+    "titulo": "Grande Mutirão de Saúde e Cidadania na Vila Mariana",
+    "categoria": "Eventos",
+    "descricao": "Neste próximo sábado, realizaremos um grande mutirão comunitário oferecendo atendimento odontológico básico, corte de cabelo gratuito, orientação jurídica e espaço de brincadeiras para as crianças. Venha participar e traga sua família!",
+    "imagem": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+    "dataCriacao": "2026-09-01T09:00:00.000Z",
+    "curtidas": 31,
+    "curtido": false,
+    "comentarios": []
+  },
+  {
+    "id": "artigo-4",
+    "titulo": "Curso Gratuito de Capacitação Profissional para Jovens e Adultos",
+    "categoria": "Projetos",
+    "descricao": "Em parceria com voluntários locais, lançamos o módulo de capacitação em informática e preparação para o primeiro emprego. Uma oportunidade imperdível para quem busca se qualificar e ingressar no mercado de trabalho com autonomia.",
+    "imagem": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+    "dataCriacao": "2026-08-31T16:00:00.000Z",
+    "curtidas": 15,
+    "curtido": false,
+    "comentarios": []
+  }
+]
