@@ -34,7 +34,6 @@ body {
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; border: none; outline: none; }
 
-/* BANNER SUPERIOR DE DOWNLOAD DO APP */
 .download-banner {
   background: linear-gradient(135deg, var(--green-dark), var(--green));
   color: #fff; padding: 12px 16px; display: flex; align-items: center;
@@ -51,7 +50,6 @@ button { cursor: pointer; border: none; outline: none; }
 .btn-banner-install:active { transform: scale(0.96); }
 .btn-banner-close { background: transparent; color: #fff; font-size: 18px; font-weight: bold; opacity: 0.8; }
 
-/* BARRA SUPERIOR */
 .topbar {
   position: sticky; top: 0; z-index: 100; height: 60px; background: #fff;
   border-bottom: 1px solid var(--border); display: flex; align-items: center;
@@ -75,13 +73,11 @@ button { cursor: pointer; border: none; outline: none; }
 }
 .btn-primary:hover { background: var(--green-dark); }
 
-/* LAYOUT */
 .layout {
   width: min(100%, 1080px); margin: 0 auto; display: grid;
   grid-template-columns: minmax(0, 680px) 320px; gap: 24px; padding: 20px 16px;
 }
 
-/* NAVEGAÇÃO ENTRE ABAS */
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
@@ -100,7 +96,6 @@ button { cursor: pointer; border: none; outline: none; }
 }
 .tag-chip.active { background: var(--green); color: #fff; border-color: var(--green); font-weight: 600; }
 
-/* CARDS E POSTS DO FEED */
 .post, .sidebar-card, .about-card {
   background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
 }
@@ -120,7 +115,6 @@ button { cursor: pointer; border: none; outline: none; }
 .post-text { font-size: 14px; padding: 0 16px 14px; white-space: pre-wrap; color: #333; }
 .post-image { width: 100%; display: block; max-height: 480px; object-fit: cover; background: #eee; }
 
-/* AÇÕES DO POST */
 .post-actions {
   display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid #f0f0f0;
 }
@@ -133,7 +127,6 @@ button { cursor: pointer; border: none; outline: none; }
 .delete-btn { margin-left: auto; color: #888; font-size: 12px; }
 .delete-btn:hover { color: var(--danger); }
 
-/* COMENTÁRIOS */
 .comments-section {
   background: #fafafa; border-top: 1px solid #eee; padding: 12px 16px; display: none;
 }
@@ -164,7 +157,6 @@ button { cursor: pointer; border: none; outline: none; }
 }
 .external-link:hover { text-decoration: underline; }
 
-/* MODAL DE PUBLICAÇÃO */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.5); z-index: 500; display: none; place-items: center; padding: 16px;
@@ -202,14 +194,12 @@ button { cursor: pointer; border: none; outline: none; }
   background: rgba(0,0,0,0.6); color: #fff; font-size: 16px;
 }
 
-/* SIDEBAR */
 .sidebar { position: sticky; top: 80px; height: max-content; }
 .sidebar-card { padding: 18px; }
 .sidebar-card h2 { font-size: 15px; margin-bottom: 10px; }
 .about-summary { font-size: 13px; color: var(--muted); line-height: 1.5; }
 .btn-link { color: var(--green); font-weight: 700; cursor: pointer; background: none; border: none; font-size: 13px; }
 
-/* NAVEGAÇÃO MOBILE (BOTTOM NAV) */
 .mobile-nav {
   position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff;
   border-top: 1px solid var(--border); display: none; justify-content: space-around;
@@ -222,7 +212,6 @@ button { cursor: pointer; border: none; outline: none; }
 .nav-item.active { color: var(--green); font-weight: 700; }
 .nav-item span { font-size: 18px; }
 
-/* TOAST */
 .toast {
   position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%);
   background: #222; color: #fff; padding: 10px 20px; border-radius: 25px;
@@ -232,7 +221,6 @@ button { cursor: pointer; border: none; outline: none; }
 
 .empty { text-align: center; background: #fff; border: 1px dashed var(--border); border-radius: 16px; padding: 40px 20px; color: var(--muted); }
 
-/* RESPONSIVIDADE */
 @media(max-width: 850px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
@@ -242,7 +230,6 @@ button { cursor: pointer; border: none; outline: none; }
 </head>
 <body>
 
-<!-- BANNER SUPERIOR PARA DOWNLOAD DO WEBAPP -->
 <div class="download-banner" id="downloadBanner">
   <div class="banner-info">
     <span class="banner-icon">📲</span>
@@ -257,7 +244,6 @@ button { cursor: pointer; border: none; outline: none; }
   </div>
 </div>
 
-<!-- BARRA SUPERIOR -->
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand" onclick="mudarAba('feed')">
@@ -270,15 +256,11 @@ button { cursor: pointer; border: none; outline: none; }
   </div>
 </header>
 
-<!-- LAYOUT PRINCIPAL -->
 <main class="layout">
   
-  <!-- CONTEÚDO PRINCIPAL -->
   <div class="content-area">
     
-    <!-- ABA 1: FEED / INÍCIO (Sempre começa aqui) -->
     <div id="tab-feed" class="tab-content active">
-      <!-- BUSCA E FILTROS -->
       <div class="filter-bar">
         <input type="text" class="search-box" id="searchBox" placeholder="🔍 Pesquisar publicações..." oninput="filtrarPosts()">
         <div class="tags-container">
@@ -294,7 +276,6 @@ button { cursor: pointer; border: none; outline: none; }
       <div id="feedNoticias"></div>
     </div>
 
-    <!-- ABA 2: SOBRE A ONG (Informações oficiais) -->
     <div id="tab-sobre" class="tab-content">
       <div class="about-card">
         <h2>Instituto Crescer Goiás</h2>
@@ -341,7 +322,6 @@ button { cursor: pointer; border: none; outline: none; }
 
   </div>
 
-  <!-- SIDEBAR (DESKTOP) -->
   <aside class="sidebar">
     <div class="sidebar-card">
       <h2>Sobre o Espaço</h2>
@@ -354,7 +334,6 @@ button { cursor: pointer; border: none; outline: none; }
   </aside>
 </main>
 
-<!-- MODAL DE NOVA PUBLICAÇÃO -->
 <div class="modal-overlay" id="modalPublicar">
   <div class="modal-card">
     <div class="modal-head">
@@ -400,7 +379,6 @@ button { cursor: pointer; border: none; outline: none; }
   </div>
 </div>
 
-<!-- NAVEGAÇÃO MOBILE (BOTTOM NAV) -->
 <nav class="mobile-nav">
   <button class="nav-item active" id="nav-feed" onclick="mudarAba('feed')">
     <span>🏠</span>Início
@@ -417,7 +395,6 @@ button { cursor: pointer; border: none; outline: none; }
 <div id="toast" class="toast">Mensagem do sistema</div>
 
 <script>
-// GERENCIAMENTO DE ESTADO E STORAGE
 const STORAGE_KEY = "noticiasCrescerGoias_v4";
 let categoriaAtual = "Todas";
 let buscaAtual = "";
@@ -439,7 +416,6 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
-// LÓGICA DO BANNER DE DOWNLOAD
 function fecharBanner() {
   document.getElementById("downloadBanner").style.display = "none";
 }
@@ -456,7 +432,6 @@ function instalarWebApp() {
   }
 }
 
-// TROCA DE ABAS
 function mudarAba(aba) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -471,7 +446,6 @@ function mudarAba(aba) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// MODAL DE PUBLICAÇÃO
 function abrirModalPublicar() {
   document.getElementById("modalPublicar").classList.add("open");
   document.getElementById("titulo").focus();
@@ -481,7 +455,6 @@ function fecharModalPublicar() {
   document.getElementById("modalPublicar").classList.remove("open");
 }
 
-// UTILITÁRIOS
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, c => ({
     "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
@@ -494,7 +467,6 @@ function formatarData(dataIso) {
   });
 }
 
-// RENDERIZAÇÃO DO FEED
 function renderizarFeed() {
   const feed = document.getElementById("feedNoticias");
   let noticias = carregarNoticias();
@@ -565,7 +537,6 @@ function renderizarFeed() {
   });
 }
 
-// AÇÕES DOS POSTS
 function toggleCurtir(id) {
   const noticias = carregarNoticias();
   const post = noticias.find(n => n.id === id);
@@ -623,7 +594,6 @@ function excluirNoticia(id) {
   showToast("Publicação excluída.");
 }
 
-// FILTROS
 function filtrarCategoria(cat, btn) {
   categoriaAtual = cat;
   document.querySelectorAll('.tag-chip').forEach(b => b.classList.remove('active'));
@@ -636,7 +606,6 @@ function filtrarPosts() {
   renderizarFeed();
 }
 
-// UPLOAD DE IMAGEM
 let imagemSelecionada = "";
 const inputImagem = document.getElementById("imagem");
 const preview = document.getElementById("preview");
@@ -662,7 +631,6 @@ document.getElementById("removeImage").addEventListener("click", () => {
   preview.style.display = "none";
 });
 
-// SUBMIT DO FORMULÁRIO DE PUBLICAÇÃO
 document.getElementById("formNoticia").addEventListener("submit", e => {
   e.preventDefault();
   const titulo = document.getElementById("titulo").value.trim();
@@ -688,7 +656,6 @@ document.getElementById("formNoticia").addEventListener("submit", e => {
   showToast("Publicação realizada com sucesso!");
 });
 
-// 5 ARTIGOS INICIAIS PREENCHIDOS NO FEED
 if (!carregarNoticias().length) {
   const artigosIniciais = [
     {
@@ -740,10 +707,8 @@ if (!carregarNoticias().length) {
   salvarNoticias(artigosIniciais);
 }
 
-// INICIALIZAÇÃO
 renderizarFeed();
 
-// MANIFESTO PWA DADOS
 try {
   const manifestData = {
     name: "ONG Crescer Goiás",
@@ -760,7 +725,6 @@ try {
   document.head.appendChild(link);
 } catch (e) {}
 
-// PROMPT DE INSTALAÇÃO DO APP
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
