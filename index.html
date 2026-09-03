@@ -34,6 +34,23 @@ body {
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; border: none; outline: none; }
 
+/* BANNER SUPERIOR DE DOWNLOAD DO APP */
+.download-banner {
+  background: linear-gradient(135deg, var(--green-dark), var(--green));
+  color: #fff; padding: 12px 16px; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.banner-info { display: flex; align-items: center; gap: 10px; }
+.banner-icon { font-size: 22px; }
+.banner-text strong { display: block; font-size: 14px; }
+.banner-actions { display: flex; align-items: center; gap: 10px; }
+.btn-banner-install {
+  background: #fff; color: var(--green-dark); font-weight: 800; border-radius: 20px;
+  padding: 6px 14px; font-size: 12px; transition: transform 0.1s;
+}
+.btn-banner-install:active { transform: scale(0.96); }
+.btn-banner-close { background: transparent; color: #fff; font-size: 18px; font-weight: bold; opacity: 0.8; }
+
 /* BARRA SUPERIOR */
 .topbar {
   position: sticky; top: 0; z-index: 100; height: 60px; background: #fff;
@@ -52,10 +69,6 @@ button { cursor: pointer; border: none; outline: none; }
 .brand span { font-size: 17px; }
 
 .top-actions { display: flex; gap: 8px; align-items: center; }
-.btn-install {
-  background: var(--green-soft); color: var(--green-dark); border: 1px solid var(--green);
-  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: none;
-}
 .btn-primary {
   background: var(--green); color: #fff; border-radius: 20px;
   padding: 8px 16px; font-weight: 700; font-size: 14px; transition: background 0.2s;
@@ -229,6 +242,21 @@ button { cursor: pointer; border: none; outline: none; }
 </head>
 <body>
 
+<!-- BANNER SUPERIOR PARA DOWNLOAD DO WEBAPP -->
+<div class="download-banner" id="downloadBanner">
+  <div class="banner-info">
+    <span class="banner-icon">📲</span>
+    <div class="banner-text">
+      <strong>Baixar WebApp Crescer Goiás</strong>
+      <span>Instale no celular para usar rápido e offline!</span>
+    </div>
+  </div>
+  <div class="banner-actions">
+    <button class="btn-banner-install" id="btnBannerInstall" onclick="instalarWebApp()">Instalar</button>
+    <button class="btn-banner-close" onclick="fecharBanner()" aria-label="Fechar banner">✕</button>
+  </div>
+</div>
+
 <!-- BARRA SUPERIOR -->
 <header class="topbar">
   <div class="topbar-inner">
@@ -237,7 +265,6 @@ button { cursor: pointer; border: none; outline: none; }
       <span>Crescer Goiás</span>
     </div>
     <div class="top-actions">
-      <button class="btn-install" id="btnInstall">📲 Instalar App</button>
       <button class="btn-primary" onclick="abrirModalPublicar()">+ Publicar</button>
     </div>
   </div>
@@ -249,7 +276,7 @@ button { cursor: pointer; border: none; outline: none; }
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="content-area">
     
-    <!-- ABA 1: FEED / INÍCIO -->
+    <!-- ABA 1: FEED / INÍCIO (Sempre começa aqui) -->
     <div id="tab-feed" class="tab-content active">
       <!-- BUSCA E FILTROS -->
       <div class="filter-bar">
@@ -267,11 +294,11 @@ button { cursor: pointer; border: none; outline: none; }
       <div id="feedNoticias"></div>
     </div>
 
-    <!-- ABA 2: SOBRE A ONG (Informações extraídas de crescergoias.org.br) -->
+    <!-- ABA 2: SOBRE A ONG (Informações oficiais) -->
     <div id="tab-sobre" class="tab-content">
       <div class="about-card">
         <h2>Instituto Crescer Goiás</h2>
-        <p><strong>Nome Oficial:</strong> Instituto Crêscer Cidação (Tia Eliane Conrado)</p>
+        <p><strong>Nome Oficial:</strong> Instituto Crê-Cer Cidação (Tia Eliane Conrado)</p>
         <p>
           O <strong>Instituto Crescer Goiás</strong> é uma Organização da Sociedade Civil de Interesse Público (OSCIP) sem fins lucrativos, fundada em 08 de abril de 2005 e reconhecida como Utilidade Pública Municipal (Lei nº 3.151/2013).
         </p>
@@ -307,7 +334,7 @@ button { cursor: pointer; border: none; outline: none; }
         <div class="contact-info">
           📍 <strong>Endereço:</strong> Av. Chevalier Bazílio Jafet, s/n, Qd. 44, Lt. 02, Vila Mariana, Aparecida de Goiânia - GO<br>
           📞 <strong>Telefones:</strong> (62) 98131-9923 / (62) 98181-1841<br>
-          🌐 <strong>Website Oficial:</strong> <a href="https://crescergoias.org.br/" target="_blank" class="external-link">crescergoias.org.br ↗</a>
+          🌐 <strong>Website Oficial:</strong> <a href="https://crescergoias.org.br/" target="_blank" rel="noopener" class="external-link">crescergoias.org.br ↗</a>
         </div>
       </div>
     </div>
@@ -391,7 +418,7 @@ button { cursor: pointer; border: none; outline: none; }
 
 <script>
 // GERENCIAMENTO DE ESTADO E STORAGE
-const STORAGE_KEY = "noticiasCrescerGoias_v3";
+const STORAGE_KEY = "noticiasCrescerGoias_v4";
 let categoriaAtual = "Todas";
 let buscaAtual = "";
 let deferredPrompt = null;
@@ -410,6 +437,23 @@ function showToast(msg) {
   toast.textContent = msg;
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+// LÓGICA DO BANNER DE DOWNLOAD
+function fecharBanner() {
+  document.getElementById("downloadBanner").style.display = "none";
+}
+
+function instalarWebApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      fecharBanner();
+      deferredPrompt = null;
+    });
+  } else {
+    alert("Para instalar o WebApp:\n\n• No Android/Chrome: Clique nos 3 pontos do navegador e escolha 'Adicionar à tela inicial'.\n• No iPhone/Safari: Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
+  }
 }
 
 // TROCA DE ABAS
@@ -490,7 +534,7 @@ function renderizarFeed() {
       </div>
       <div class="post-title">${escapeHTML(noticia.titulo)}</div>
       <div class="post-text">${escapeHTML(noticia.descricao)}</div>
-      ${noticia.imagem ? `<img class="post-image" src="${noticia.imagem}" alt="Imagem">` : ""}
+      ${noticia.imagem ? `<img class="post-image" src="${noticia.imagem}" alt="Imagem do post" loading="lazy">` : ""}
       
       <div class="post-actions">
         <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleCurtir('${noticia.id}')">
@@ -644,18 +688,66 @@ document.getElementById("formNoticia").addEventListener("submit", e => {
   showToast("Publicação realizada com sucesso!");
 });
 
-// DADOS INICIAIS DE EXEMPLO
+// 5 ARTIGOS INICIAIS PREENCHIDOS NO FEED
 if (!carregarNoticias().length) {
-  salvarNoticias([
+  const artigosIniciais = [
     {
-      id: "1",
-      titulo: "Bem-vindos ao App da ONG Crescer Goiás!",
+      id: "artigo-1",
+      titulo: "Campanha de Doação de Cestas Básicas para a Comunidade",
+      categoria: "Ações",
+      descricao: "Estamos iniciando nossa campanha mensal de arrecadação de alimentos não perecíveis. Nossa meta é atender mais de 200 famílias cadastradas na região da Vila Mariana em Aparecida de Goiânia. Contamos com a colaboração de todos! Doações podem ser entregues diretamente na sede da ONG ou via PIX.",
+      imagem: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80",
+      dataCriacao: new Date(Date.now() - 3600000 * 2).toISOString(),
+      curtidas: 18, curtido: true,
+      comentarios: [
+        { autor: "Maria Silva", texto: "Parabéns pela iniciativa! Como faço para doar via PIX?" },
+        { autor: "João Pedro", texto: "Já deixei minha contribuição na sede hoje cedo!" }
+      ]
+    },
+    {
+      id: "artigo-2",
+      titulo: "Abertas as Inscrições para Aulas Gratuitas de Judô e Ballet",
+      categoria: "Projetos",
+      descricao: "O Instituto Crescer Goiás informa que estão abertas as matrículas para os projetos esportivos e culturais de Judô e Ballet infantil. As aulas são totalmente gratuitas e direcionadas a crianças e adolescentes atendidos no contraturno escolar.",
+      imagem: "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&w=800&q=80",
+      dataCriacao: new Date(Date.now() - 3600000 * 24).toISOString(),
+      curtidas: 24, curtido: false,
+      comentarios: [
+        { autor: "Carla Mendes", texto: "Inscrições presenciais ou online?" }
+      ]
+    },
+    {
+      id: "artigo-3",
+      titulo: "Grande Mutirão de Saúde e Cidadania na Vila Mariana",
+      categoria: "Eventos",
+      descricao: "Neste próximo sábado, realizaremos um grande mutirão comunitário oferecendo atendimento odontológico básico, corte de cabelo gratuito, orientação jurídica e espaço de brincadeiras para as crianças. Venha participar e traga sua família!",
+      imagem: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+      dataCriacao: new Date(Date.now() - 3600000 * 48).toISOString(),
+      curtidas: 31, curtido: true,
+      comentarios: []
+    },
+    {
+      id: "artigo-4",
+      titulo: "Curso Gratuito de Capacitação Profissional para Jovens e Adultos",
+      categoria: "Projetos",
+      descricao: "Em parceria com voluntários locais, lançamos o módulo de capacitação em informática e preparação para o primeiro emprego. Uma oportunidade imperdível para quem busca se qualificar e ingressar no mercado de trabalho com autonomia.",
+      imagem: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+      dataCriacao: new Date(Date.now() - 3600000 * 72).toISOString(),
+      curtidas: 15, curtido: false,
+      comentarios: []
+    },
+    {
+      id: "artigo-5",
+      titulo: "Bazar Solidário de Roupas e Calçados Arrecada Recursos",
       categoria: "Avisos",
-      descricao: "Acompanhe por aqui todas as nossas campanhas, aulas de Judô/Ballet, entregas de cestas básicas e projetos sociais em Aparecida de Goiânia.",
-      dataCriacao: new Date().toISOString(),
-      curtidas: 8, curtido: false, comentarios: []
+      descricao: "Nesta sexta-feira acontecerá nosso Bazar Beneficente com peças a partir de R$ 5,00. Todo o valor arrecadado será revertido para a manutenção das oficinas infantis e compra de lanches diários para os alunos do projeto.",
+      imagem: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb0?auto=format&fit=crop&w=800&q=80",
+      dataCriacao: new Date(Date.now() - 3600000 * 96).toISOString(),
+      curtidas: 22, curtido: true,
+      comentarios: []
     }
-  ]);
+  ];
+  salvarNoticias(artigosIniciais);
 }
 
 // INICIALIZAÇÃO
@@ -682,15 +774,6 @@ try {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  const btn = document.getElementById('btnInstall');
-  btn.style.display = 'block';
-  btn.addEventListener('click', () => {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      btn.style.display = 'none';
-      deferredPrompt = null;
-    });
-  });
 });
 </script>
 </body>
